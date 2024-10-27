@@ -1,0 +1,22 @@
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+    <h2 class="text-2xl font-bold mb-4">Transactions</h2>
+    <p>This is where you'll manage your transactions.</p>
+
+    <!-- Add transaction form and list here -->
+    {% if transactions %}
+        {% for transaction in transactions %}
+        <div class="transactions-item">
+            {% if transaction.image %}
+                <img src="{{ transaction.image.url }}" alt="{{ transaction.details }}" class="transaction-image">
+            {% else %}
+                <p>No image available</p>
+            {% endif %}
+            <h3>{{ transaction.details }}</h3>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No transactions available.</p>
+    {% endif %}
+{% endblock %}
