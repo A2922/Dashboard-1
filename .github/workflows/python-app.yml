@@ -1,4 +1,4 @@
-name: Python application
+name: Python application with GitHub Pages Deployment
 
 on:
   push:
@@ -22,7 +22,35 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest  # Ensure pytest is installed
+          pip install pytest mkdocs  # Ensure pytest and mkdocs are installed
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      
+      - name: Run tests with pytest
+        run: |
+          pytest --maxfail=5 --disable-warnings
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies for deployment
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs
+
+      - name: Build site
+        run: mkdocs build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site  # MkDocs builds into 'site' by default
